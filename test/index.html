@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>퍼스트 클래스 비서실 : 고객접견 실무 시뮬레이터</title>
+  <meta name="description" content="고등학교 비서·사무행정 교과 실습을 위한 고객접견 및 비즈니스 매너 시뮬레이션 웹앱">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <!-- 배경 데코레이션 효과 -->
+  <div class="bg-pattern" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <div class="app-container">
+    <!-- 상단 글로벌 헤더 -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-badge">
+          <span class="badge-icon">🏛️</span>
+          <span class="badge-text">FIRST-CLASS SECRETARY</span>
+        </div>
+        <h1 class="brand-title">고객접견 실무 시뮬레이터</h1>
+      </div>
+      <div class="header-actions">
+        <button id="soundToggleBtn" class="icon-btn" title="효과음 켜기/끄기" aria-label="효과음 토글">
+          <span id="soundIcon">🔔</span>
+        </button>
+        <button id="guideBtn" class="icon-btn" title="비서 매너 가이드 요약" aria-label="가이드 보기">
+          <span>📖</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- [화면 1] 시작 화면 -->
+    <main id="start-screen" class="view-screen active">
+      <div class="welcome-card card">
+        <div class="welcome-header">
+          <div class="emblem-container">
+            <div class="gold-ring"></div>
+            <div class="emblem-icon">🛎️</div>
+          </div>
+          <span class="role-chip">고등학교 3학년 비서 실무</span>
+          <h2 class="welcome-title">비서실 고객접견 모의 실습</h2>
+          <p class="welcome-desc">
+            비서의 첫인상은 곧 <strong>기업의 얼굴</strong>입니다.<br>
+            방문객 상황에 알맞은 <strong>인사 예절(각도)</strong>과 품격 있는 <strong>비즈니스 언어</strong>를 실전처럼 연습해 보세요.
+          </p>
+        </div>
+
+        <div class="feature-pills">
+          <div class="pill">
+            <span class="pill-icon">📐</span>
+            <span class="pill-title">인사 각도 예절</span>
+            <span class="pill-desc">목례·보통례·정중례</span>
+          </div>
+          <div class="pill">
+            <span class="pill-icon">💬</span>
+            <span class="pill-title">쿠션어 & 경어법</span>
+            <span class="pill-desc">정중하고 명확한 화법</span>
+          </div>
+          <div class="pill">
+            <span class="pill-icon">⚡</span>
+            <span class="pill-title">돌발 상황 대처</span>
+            <span class="pill-desc">지연·불청객·클레임</span>
+          </div>
+        </div>
+
+        <!-- 학생 정보 입력 -->
+        <div class="trainee-form">
+          <div class="input-group">
+            <label for="traineeNameInput">실습생 이름 (또는 학번)</label>
+            <input type="text" id="traineeNameInput" placeholder="예: 3학년 2반 홍길동" maxlength="20" autocomplete="off">
+          </div>
+          <button id="startSimBtn" class="primary-btn pulse-glow">
+            <span>실무 시뮬레이션 시작하기</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </div>
+
+        <div class="start-footer-note">
+          <span>※ 본 시뮬레이터는 한국 비서협회 표준 직무 가이드라인 및 국가직무능력표준(NCS 비서)을 준수합니다.</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- [화면 2] 시뮬레이션 진행 화면 -->
+    <section id="simulation-screen" class="view-screen">
+      <!-- 진행 바 & 점수 -->
+      <div class="sim-status-bar card-sm">
+        <div class="status-left">
+          <span class="stage-tag" id="scenarioCounter">상황 1 / 5</span>
+          <span class="scenario-category-badge" id="scenarioCategory">VIP 내방객 응대</span>
+        </div>
+        <div class="status-center">
+          <div class="progress-track" aria-label="진행률">
+            <div class="progress-fill" id="progressBar" style="width: 20%;"></div>
+          </div>
+        </div>
+        <div class="status-right">
+          <span class="score-label">실무 점수</span>
+          <span class="score-val" id="currentScoreBadge">0점</span>
+        </div>
+      </div>
+
+      <!-- 내방객 프로필 & 상황 카드 -->
+      <div class="visitor-card card">
+        <div class="visitor-header">
+          <div class="visitor-avatar-wrap">
+            <div class="visitor-avatar" id="visitorAvatar">👤</div>
+            <div class="visitor-status-indicator" id="visitorMoodIndicator" title="고객 상태"></div>
+          </div>
+          <div class="visitor-info">
+            <div class="visitor-tag-group">
+              <span class="tag tag-company" id="visitorCompany">(주)글로벌네트웍스</span>
+              <span class="tag tag-appt" id="visitorAppt">사전 약속 있음 (14:00)</span>
+            </div>
+            <h3 class="visitor-name" id="visitorName">박성민 전무</h3>
+            <p class="visitor-purpose" id="visitorPurpose">대표이사와 신규 전략 프로젝트 2차 협의차 내방</p>
+          </div>
+        </div>
+
+        <!-- 내방객 실제 발화 말풍선 -->
+        <div class="speech-bubble-wrapper">
+          <div class="bubble-speaker">방문객 발화</div>
+          <div class="speech-bubble" id="visitorDialogue">
+            "안녕하세요. 오늘 2시에 최 대표님과 미팅이 약속되어 있어 찾아왔습니다."
+          </div>
+        </div>
+      </div>
+
+      <!-- 2단계 접견 실무 액션 영역 -->
+      <div class="action-section">
+        <!-- 1단계: 인사 예절 선택 -->
+        <div class="action-box card" id="greetingStepBox">
+          <div class="step-header">
+            <span class="step-num">STEP 1</span>
+            <div>
+              <h4 class="step-title">상황에 맞는 인사 예절(각도)을 선택하세요</h4>
+              <p class="step-desc">내방객의 격식과 상황에 가장 적절한 인사를 선택합니다.</p>
+            </div>
+          </div>
+
+          <div class="greeting-options-grid" id="greetingOptionsGrid">
+            <!-- 자바스크립트로 동적 렌더링되거나 기본 제공 -->
+            <button class="greeting-card-btn" data-angle="15">
+              <div class="angle-badge">15°</div>
+              <div class="angle-icon">🚶</div>
+              <div class="angle-name">목례 (15°)</div>
+              <div class="angle-sub">가벼운 인사 / 복도에서 마주칠 때</div>
+            </button>
+
+            <button class="greeting-card-btn" data-angle="30">
+              <div class="angle-badge">30°</div>
+              <div class="angle-icon">🤝</div>
+              <div class="angle-name">보통례 (30°)</div>
+              <div class="angle-sub">일반적인 영접·배웅 / 가장 표준적인 비서 인사</div>
+            </button>
+
+            <button class="greeting-card-btn" data-angle="45">
+              <div class="angle-badge">45°</div>
+              <div class="angle-icon">🙇</div>
+              <div class="angle-name">정중례 (45°)</div>
+              <div class="angle-sub">VIP 의전 / 감사와 깊은 사과의 표시</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2단계: 비즈니스 언어 & 행동 선택 -->
+        <div class="action-box card disabled-step" id="dialogueStepBox">
+          <div class="step-header">
+            <span class="step-num">STEP 2</span>
+            <div>
+              <h4 class="step-title">비서로서 가장 적절한 응대 대사와 행동을 선택하세요</h4>
+              <p class="step-desc">올바른 비즈니스 경어, 쿠션어, 비서 행동 수칙을 고려하여 선택합니다.</p>
+            </div>
+          </div>
+
+          <div class="dialogue-options-list" id="dialogueOptionsList">
+            <!-- 자바스크립트로 4개 선택지 렌더링 -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- [피드백 모달] 즉각 매너 피드백 & 코칭 해설 -->
+    <div id="feedbackModal" class="modal-backdrop" aria-hidden="true">
+      <div class="modal-card card">
+        <div class="feedback-badge-row">
+          <span class="feedback-result-badge" id="feedbackResultBadge">정답입니다!</span>
+          <span class="feedback-score-added" id="feedbackScoreAdded">+20점</span>
+        </div>
+
+        <h3 class="feedback-heading" id="feedbackTitle">탁월한 비즈니스 매너입니다.</h3>
+
+        <div class="feedback-analysis-grid">
+          <div class="analysis-item" id="greetingAnalysisBox">
+            <div class="analysis-label">인사 예절 코칭</div>
+            <div class="analysis-content" id="greetingAnalysisText">...</div>
+          </div>
+          <div class="analysis-item" id="dialogueAnalysisBox">
+            <div class="analysis-label">비즈니스 언어 & 행동 코칭</div>
+            <div class="analysis-content" id="dialogueAnalysisText">...</div>
+          </div>
+        </div>
+
+        <div class="etiquette-tip-box">
+          <div class="tip-header">
+            <span class="tip-icon">💡</span>
+            <span class="tip-title">비서 실무 핵심 노트</span>
+          </div>
+          <p class="tip-body" id="feedbackTipText">
+            상사 부재 또는 대기 상황에서는 '사장님은 안 계십니다' 대신 '사장님께서는 잠시 회의 중이십니다'와 같이 높임 대상을 주어로 정확히 표현해야 합니다.
+          </p>
+        </div>
+
+        <button id="nextScenarioBtn" class="primary-btn modal-next-btn">
+          <span id="nextBtnText">다음 내방객 응대하기</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- [화면 3] 결과 평가서 화면 -->
+    <section id="result-screen" class="view-screen">
+      <div class="result-card card">
+        <div class="result-header">
+          <div class="certificate-emblem">🏆</div>
+          <span class="cert-subtitle">PROFESSIONAL SECRETARY ASSESSMENT</span>
+          <h2 class="cert-title">고객접견 실무 종합 평가서</h2>
+          <p class="cert-name-line">
+            실습생 : <strong id="resultTraineeName">홍길동</strong> 님
+          </p>
+        </div>
+
+        <!-- 최종 점수 & 등급 -->
+        <div class="grade-banner">
+          <div class="grade-badge-circle" id="resultGradeIcon">👑</div>
+          <div class="grade-info">
+            <div class="grade-title" id="resultGradeTitle">특급 수석 비서</div>
+            <div class="grade-score-wrap">
+              <span class="total-score-val" id="resultTotalScore">100</span>
+              <span class="total-score-max">/ 100점 만점</span>
+            </div>
+            <p class="grade-desc" id="resultGradeComment">
+              완벽한 비즈니스 의전과 상황 대처 역량을 갖춘 인재입니다. 당장 기업 비서실에 배치되어도 손색이 없습니다!
+            </p>
+          </div>
+        </div>
+
+        <!-- 영역별 세부 진단 -->
+        <div class="competency-grid">
+          <div class="comp-card">
+            <div class="comp-head">
+              <span class="comp-icon">📐</span>
+              <span class="comp-name">인사 각도 및 의전 태도</span>
+            </div>
+            <div class="comp-score-bar">
+              <div class="comp-fill" id="greetingScoreBar" style="width: 100%;"></div>
+            </div>
+            <div class="comp-score-text" id="greetingScoreText">50 / 50점 (100%)</div>
+          </div>
+
+          <div class="comp-card">
+            <div class="comp-head">
+              <span class="comp-icon">💬</span>
+              <span class="comp-name">비즈니스 언어 및 대처법</span>
+            </div>
+            <div class="comp-score-bar">
+              <div class="comp-fill" id="dialogueScoreBar" style="width: 100%;"></div>
+            </div>
+            <div class="comp-score-text" id="dialogueScoreText">50 / 50점 (100%)</div>
+          </div>
+        </div>
+
+        <!-- 응대 시나리오 복습 요약 -->
+        <div class="review-section">
+          <h4 class="review-title">📋 5대 실습 상황 요약 리포트</h4>
+          <div class="review-list" id="reviewList">
+            <!-- JS 동적 생성 -->
+          </div>
+        </div>
+
+        <!-- 액션 버튼 -->
+        <div class="result-actions">
+          <button id="restartBtn" class="primary-btn">
+            <span>🔄 다시 실습 도전하기</span>
+          </button>
+          <button id="printBtn" class="secondary-btn">
+            <span>🖨️ 평가서 인쇄 / PDF 저장</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- [가이드 모달] 비서 기본 매너 요약 카드 -->
+    <div id="guideModal" class="modal-backdrop" aria-hidden="true">
+      <div class="modal-card card guide-modal-content">
+        <div class="guide-modal-header">
+          <h3>📖 비서 고객접견 핵심 매너 요약</h3>
+          <button id="closeGuideBtn" class="close-x-btn" aria-label="닫기">✕</button>
+        </div>
+        <div class="guide-content-scroll">
+          <div class="guide-item">
+            <h4>1. 인사 예절(각도)의 원칙</h4>
+            <ul>
+              <li><strong>목례(15°)</strong>: 복도, 엘리베이터 등 좁은 공간이나 동료/자주 마주칠 때 가볍게 인사</li>
+              <li><strong>보통례(30°)</strong>: 고객을 맞이하고 배웅할 때 행하는 가장 표준적인 비즈니스 정규 인사</li>
+              <li><strong>정중례(45°)</strong>: VIP 영접, 감사, 공식 의전, 고객에게 사과할 때 행하는 정중한 인사</li>
+            </ul>
+          </div>
+
+          <div class="guide-item">
+            <h4>2. 올바른 비즈니스 경어와 쿠션어</h4>
+            <ul>
+              <li><strong>쿠션어 활용</strong>: "죄송하지만", "실례지만", "번거로우시겠지만"을 문두에 붙여 부드러운 화법 구사</li>
+              <li><strong>사물 존칭 지양</strong>: "커피 나오셨습니다(X)" → "커피 준비해 드렸습니다(O)", "포장되십니다(X)" → "포장해 드리겠습니다(O)"</li>
+              <li><strong>상사 안내 화법</strong>: "대표님은 지금 안 계십니다(X)" → "대표님께서는 잠시 자리를 비우셨습니다(O)"</li>
+            </ul>
+          </div>
+
+          <div class="guide-item">
+            <h4>3. 상하석(상석) 좌석 안내 원칙</h4>
+            <ul>
+              <li>출입문에서 <strong>가장 먼 곳</strong>, 전망이나 <strong>창가 쪽</strong>이 상석(상좌)입니다.</li>
+              <li>내방객에게는 항상 상석을 권하고, 비서는 출입문과 가장 가까운 곳에 착석하거나 응대합니다.</li>
+            </ul>
+          </div>
+        </div>
+        <button id="dismissGuideBtn" class="secondary-btn w-100">이해했습니다 (닫기)</button>
+      </div>
+    </div>
+
+    <!-- 하단 푸터 -->
+    <footer class="app-footer">
+      <p>고등학교 3학년 비서과 교육용 웹앱 | 순수 HTML5 · CSS3 · JavaScript로 제작되었습니다.</p>
+    </footer>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
